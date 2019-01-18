@@ -11,6 +11,6 @@ import java.sql.*;
 public class test {
     public static void main(String[] args) throws SQLException {
 //        new Insert().model_auto("TEST DE INSERT", 879);
-        new SQL_Piesa().insertPiesa(1, 1, "fuzeta", 20, 120);
+        new SQL_Piesa().insertPiesa(3, 5, "fuzetoi", 20, 120);
     }
 }
