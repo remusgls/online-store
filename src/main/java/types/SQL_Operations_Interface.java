@@ -12,4 +12,6 @@ public interface SQL_Operations_Interface {
     public default void delete() {
 
     }
+
+    //some comment for Coman Adrian
 }
