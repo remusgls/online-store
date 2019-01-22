@@ -76,6 +76,30 @@ public class SQL_User {
         new DB_Connection().closeDBConnection(connection);
     }
 
+    public void toggleDeactivateUser(String email, Boolean status) throws SQLException {
+        Connection connection = new DB_Connection().openDBConnection();
+
+        if (email.isEmpty() ||
+            !new Db_Fields().EMAIL_PATTERN.matcher(email).matches() ||
+            !this.checkExistingUserByEmail(email)) {
+
+            System.out.print(Errors.ERROR_DB_INSERT_ERROR_WRONG_CHARS);
+            new DB_Connection().closeDBConnection(connection);
+
+            return;
+        }
+
+        PreparedStatement searchUser = connection.prepareStatement("update user set deactivated = ? where mail = ?");
+
+        searchUser.setBoolean(1, status);
+        searchUser.setString(2, email);
+
+        searchUser.executeUpdate();
+        connection.commit();
+
+        new DB_Connection().closeDBConnection(connection);
+    }
+
     public void insertUser(String nume, String prenume, String adresa, String parola, String email) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 

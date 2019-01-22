@@ -10,24 +10,24 @@ import java.sql.SQLException;
 
 public class SQL_Model {
     public void insertModel(String model,int id_marca) throws SQLException {
-           Connection connection = new DB_Connection().openDBConnection();
-            PreparedStatement insertModel_auto = connection.prepareStatement("insert into `model_auto` values (?, ?, ?)");
+       Connection connection = new DB_Connection().openDBConnection();
+        PreparedStatement insertModel_auto = connection.prepareStatement("insert into `model_auto` values (?, ?, ?, ?)");
 
-           if (
-                    model.length() == 0 ||
-                            this.checkDuplicateModel(connection, model)) {
-                System.out.print(Errors.ERROR_DB_INVALID_MODEL);
+       if (model.length() == 0 ||
+           this.checkDuplicateModel(connection, model)) {
+            System.out.print(Errors.ERROR_DB_INVALID_MODEL);
 
-               new DB_Connection().closeDBConnection(connection);
+           new DB_Connection().closeDBConnection(connection);
 
-              return;
-           }
-                insertModel_auto.setObject(1,null);
-                insertModel_auto.setString(2,model);
-                insertModel_auto.setInt(3,id_marca);
+          return;
+       }
+        insertModel_auto.setObject(1,null);
+        insertModel_auto.setString(2, model);
+        insertModel_auto.setInt(3, id_marca);
+        insertModel_auto.setBoolean(4, false);
 
-                 insertModel_auto.executeUpdate();
-                  connection.commit();
+        insertModel_auto.executeUpdate();
+        connection.commit();
 
         new DB_Connection().closeDBConnection(connection);
       }
