@@ -1,9 +1,7 @@
 package core;
 
-import queries.SQL_Cat_piesa;
-import queries.SQL_Model;
-import queries.SQL_Piesa;
-import queries.SQL_User;
+import model.User;
+import queries.*;
 import tools.DB_Connection;
 import tools.DB_Statements;
 import types.Config;
@@ -28,10 +26,16 @@ public class test {
 //        new SQL_Piesa().pretSet(6, "Capota motor", 8, 300);
 
         // MODEL model
-        new SQL_Model().insertModel("Samsung", 3);
+        // new SQL_Model().insertModel("Samsung", 3);
 
         // MODEL USER
         // new SQL_User().insertUser("coman", "adrian", "strada cosminului numarul 7", "HAHALERO", "ett@gmail.com");
         // new SQL_User().updateUserData("septe@gmail.com",null, "adrian", "HAHAHA", null);
+
+        // MODEL CART
+        new SQL_Cart().createUserCart(4);
+
+        // RUNNER USER
+//        User remus = new User()
     }
 }

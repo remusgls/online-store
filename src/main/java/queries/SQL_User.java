@@ -158,4 +158,30 @@ public class SQL_User {
 
         return foundUserEmailAddress;
     }
+
+    public boolean checkExistingUserById(int userId) throws SQLException {
+        if (userId == 0) {
+            return true;
+        }
+
+        boolean foundUser = false;
+
+        Connection connection = new DB_Connection().openDBConnection();
+
+        PreparedStatement searchStatement = connection.prepareStatement("select id from `user` where id = ?");
+
+        searchStatement.setInt(1, userId);
+
+        ResultSet resultSet = searchStatement.executeQuery();
+
+        while (resultSet.next()) {
+            foundUser = resultSet.getInt("id") == userId;
+
+            if (foundUser) {
+                break;
+            }
+        }
+
+        return foundUser;
+    }
 }
