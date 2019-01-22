@@ -11,4 +11,7 @@ public class Errors {
     public static final String ERROR_DB_INVALID_MODEL_ID = "Invalid model_id selection. Check it out!";
     public static final String ERROR_DB_INVALID_CATEGORIE_PIESA_ID = "Invalid categorie_id selection. Check it out!";
 
+    public static final String ERROR_DB_INVALID_MARCA = "Invalid marca selection. Check it out!";
+    public static final String ERROR_DB_INVALID_MARCA_NOUA = "Invalid marca selection. Check it out!";
+
 }
