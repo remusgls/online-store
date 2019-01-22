@@ -10,8 +10,6 @@ import java.sql.SQLException;
 
 public class SQL_Cat_piesa {
 
-<<<<<<< HEAD
-=======
     public void insertCatPiesa(String newCategorie) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
@@ -57,6 +55,4 @@ public class SQL_Cat_piesa {
 
 
     }
-
->>>>>>> 84beb61caaaa18c12417dfc2f4b4b4dd8bbd97fc
 }
