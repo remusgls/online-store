@@ -13,7 +13,7 @@ public class SQL_User {
 
         if (email.length() == 0 ||
             !(new Db_Fields().EMAIL_PATTERN.matcher(email).matches())) {
-            System.out.print(Errors.ERROR_DB_INVALID_MODEL_ID);
+            System.out.print(Errors.ERROR_DB_INVALID_EMAIL);
 
             new DB_Connection().closeDBConnection(connection);
 
@@ -28,7 +28,7 @@ public class SQL_User {
 
         // no user found!
         if (!searchResults.next()) {
-            System.out.print(Errors.ERROR_DB_INVALID_MODEL_ID);
+            System.out.print(Errors.ERROR_DB_INVALID_EMAIL);
 
             new DB_Connection().closeDBConnection(connection);
 
@@ -38,7 +38,7 @@ public class SQL_User {
         PreparedStatement updateUser = connection.prepareStatement("update user set nume = ?, prenume = ?, parola = ?, mail = ? where mail = ?");
 
         if (searchResults.next()) {
-            System.out.print(Errors.ERROR_DB_INSERT_ERROR_WRONG_CHARS);
+            System.out.print(Errors.ERROR_DB_DUPLICATE_EMAIL);
             new DB_Connection().closeDBConnection(connection);
             return;
         }
@@ -86,7 +86,7 @@ public class SQL_User {
             email.length() <= 3 ||
             this.checkExistingUserByEmail(email) ||
             !(new Db_Fields().EMAIL_PATTERN.matcher(email).matches())) {
-            System.out.println(Errors.ERROR_DB_INVALID_MODEL_ID);
+            System.out.println(Errors.ERROR_DB_INVALID_USER_DETAILS);
 
             new DB_Connection().closeDBConnection(connection);
 

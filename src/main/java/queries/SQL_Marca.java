@@ -11,7 +11,12 @@ import java.sql.SQLException;
 public
 class SQL_Marca {
 
-    public void insert(String marca) throws SQLException {
+    /**
+     * insert new marca_auto to marca
+     * @param marca
+     * @throws SQLException
+     */
+    public void insertMarca(String marca) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
         PreparedStatement insertStatement = connection.prepareStatement("insert into `marca_auto` values (?, ?)");
 
@@ -36,7 +41,13 @@ class SQL_Marca {
         new DB_Connection().closeDBConnection(connection);
     }
 
-
+    /**
+     * check for already existing marca_auto on marca
+     * @param connection
+     * @param marca
+     * @return
+     * @throws SQLException
+     */
     public boolean checkDuplicateMarca(Connection connection, String marca) throws SQLException {
         if (marca.length() == 0) {
             return false;
