@@ -13,5 +13,5 @@ public interface SQL_Operations_Interface {
 
     }
 
-    //some comment for Coman Adrian
+
 }

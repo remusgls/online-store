@@ -9,6 +9,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SQL_Piesa {
+    /**
+     * delete row from piesa
+     * @param id
+     * @param piesa
+     * @param id_model
+     * @throws SQLException
+     */
     public void deletePiesa(int id, String piesa, int id_model) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
@@ -33,6 +40,14 @@ public class SQL_Piesa {
         new DB_Connection().closeDBConnection(connection);
     }
 
+    /**
+     * update flag deleted from piesa
+     * @param id
+     * @param piesa
+     * @param id_model
+     * @param deleted
+     * @throws SQLException
+     */
     public void deleteUpdatePiesa(int id, String piesa, int id_model, Boolean deleted) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
@@ -58,6 +73,14 @@ public class SQL_Piesa {
         new DB_Connection().closeDBConnection(connection);
     }
 
+    /**
+     * update pret from piesa with X value
+     * @param id
+     * @param piesa
+     * @param id_model
+     * @param pretUpdateValue
+     * @throws SQLException
+     */
     public void pretUpdate(int id, String piesa, int id_model, int pretUpdateValue) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
@@ -99,6 +122,14 @@ public class SQL_Piesa {
         new DB_Connection().closeDBConnection(connection);
     }
 
+    /**
+     * update pret to a X value
+     * @param id
+     * @param piesa
+     * @param id_model
+     * @param pretValue
+     * @throws SQLException
+     */
     public void pretSet(int id, String piesa, int id_model, int pretValue) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
@@ -127,6 +158,14 @@ public class SQL_Piesa {
         new DB_Connection().closeDBConnection(connection);
     }
 
+    /**
+     * update stoc from piesa with X piesa
+     * @param id
+     * @param piesa
+     * @param id_model
+     * @param stocUpdateValue
+     * @throws SQLException
+     */
     public void stocUpdate(int id, String piesa, int id_model, int stocUpdateValue) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
@@ -135,7 +174,7 @@ public class SQL_Piesa {
             piesa.length() <= 0 ||
             id_model == 0 ||
             !this.checkDuplicateEntry(connection, piesa, id_model)) {
-            System.out.print(Errors.ERROR_DB_INVALID_MODEL_ID);
+            System.out.print(Errors.ERROR_DB_PIESA_NOT_FOUND);
 
             return;
         }
@@ -168,6 +207,14 @@ public class SQL_Piesa {
         new DB_Connection().closeDBConnection(connection);
     }
 
+    /**
+     * update stoc to X piesa
+     * @param id
+     * @param piesa
+     * @param id_model
+     * @param stocValue
+     * @throws SQLException
+     */
     public void stocSet(int id, String piesa, int id_model, int stocValue) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
@@ -177,7 +224,7 @@ public class SQL_Piesa {
             piesa.length() <= 0 ||
             id_model == 0 ||
             !this.checkDuplicateEntry(connection, piesa, id_model)) {
-            System.out.print(Errors.ERROR_DB_INVALID_MODEL_ID);
+            System.out.print(Errors.ERROR_DB_PIESA_NOT_FOUND);
 
             new DB_Connection().closeDBConnection(connection);
             return;
@@ -196,6 +243,15 @@ public class SQL_Piesa {
         new DB_Connection().closeDBConnection(connection);
     }
 
+    /**
+     * insert new piesa to piesa
+     * @param id_categorie
+     * @param id_model
+     * @param piesa
+     * @param pret
+     * @param stoc
+     * @throws SQLException
+     */
     public void insertPiesa(int id_categorie, int id_model, String piesa, int pret, int stoc ) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
@@ -234,6 +290,13 @@ public class SQL_Piesa {
         new DB_Connection().closeDBConnection(connection);
     }
 
+    /**
+     * check for existing id_categorie for inserting new piesa
+     * @param connection
+     * @param id_categorie
+     * @return
+     * @throws SQLException
+     */
     public boolean checkIdCategorie(Connection connection, int id_categorie) throws SQLException {
         if (id_categorie == 0) {
             return false;
@@ -246,6 +309,13 @@ public class SQL_Piesa {
         return searchStatement.executeQuery().next();
     }
 
+    /**
+     * check for existing id_model for inserting new piesa
+     * @param connection
+     * @param id_model
+     * @return
+     * @throws SQLException
+     */
     public boolean checkIdModel(Connection connection, int id_model) throws SQLException {
         if (id_model == 0) {
             return false;
@@ -258,6 +328,14 @@ public class SQL_Piesa {
         return searchStatement.executeQuery().next();
     }
 
+    /**
+     * check for already existing piesa
+     * @param connection
+     * @param piesa
+     * @param id_model
+     * @return
+     * @throws SQLException
+     */
     public boolean checkDuplicateEntry(Connection connection, String piesa, int id_model) throws SQLException {
         if (piesa.length() == 0) {
             return false;
