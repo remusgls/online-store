@@ -4,6 +4,7 @@ import model.User;
 import queries.*;
 import tools.DB_Connection;
 import tools.DB_Statements;
+import tools.PDF_generator;
 import types.Config;
 import types.Db_Fields;
 
@@ -33,9 +34,12 @@ public class test {
         // new SQL_User().updateUserData("septe@gmail.com",null, "adrian", "HAHAHA", null);
 
         // MODEL CART
-        new SQL_Cart().createUserCart(4);
+//        new SQL_Cart().createUserCart(4);
 
         // RUNNER USER
 //        User remus = new User()
+
+        // PDF GENERATOR
+        new PDF_generator().generatePDFtable();
     }
 }
