@@ -48,9 +48,8 @@ public class PDF_generator {
         cell.setAlign(HorizontalAlignment.RIGHT);
         cell.setFontSize(6);
         cell.setTextColor(Color.GRAY);
-        cell.setBottomPadding(20);
+        cell.setBottomPadding(10);
         cell.setBorderStyle(null);
-        cell.setBottomBorderStyle(new LineStyle(Color.GRAY, 1));
         table.addHeaderRow(headerRow);
 
         String someString = "Online Store Sesame Street";
@@ -58,9 +57,11 @@ public class PDF_generator {
 
         Row<PDPage> row = table.createRow(12);
         cell = row.createCell(50, invoiceTypes.STORE_NAME + "<br>" + invoiceTypes.STORE_ADDRESS + "<br>" + invoiceTypes.STORE_CITY + "<br>" + invoiceTypes.STORE_PHONE + invoiceTypes.STORE_CAPITAL_SOCIAL);
+        cell.setBorderStyle(null);
 
         cell = row.createCell(50, someString2 + "<br>" + someString);
         cell.setAlign(HorizontalAlignment.RIGHT);
+        cell.setBorderStyle(null);
 
         //table separator
         Row<PDPage> separatorRow = table.createRow(40);
@@ -81,11 +82,19 @@ public class PDF_generator {
         // table entries -- header
         Row<PDPage> headerTableEntries = table.createRow(20);
         cell = headerTableEntries.createCell(10, "NR.");
+        cell.setFont(PDType1Font.HELVETICA_BOLD);
 
         cell = headerTableEntries.createCell(40, "DENUMIRE PRODUS");
+        cell.setFont(PDType1Font.HELVETICA_BOLD);
+
         cell = headerTableEntries.createCell(15, "BUC");
+        cell.setFont(PDType1Font.HELVETICA_BOLD);
+
         cell = headerTableEntries.createCell(15, "PRET U");
+        cell.setFont(PDType1Font.HELVETICA_BOLD);
+
         cell = headerTableEntries.createCell(20, "PRET");
+        cell.setFont(PDType1Font.HELVETICA_BOLD);
 
         // table entries -- entries
         for(int i = 0; i < 10; i++) {
@@ -134,8 +143,10 @@ public class PDF_generator {
         cell = userDataTableEntries.createCell(100, invoiceTypes.SEMNATURA + " / " + invoiceTypes.DATA);
         cell.setAlign(HorizontalAlignment.RIGHT);
         cell.setLineSpacing(20);
-        cell.setTopPadding(100);
-        cell.setFontSize(20);
+        cell.setFont(PDType1Font.HELVETICA_BOLD);
+        cell.setBorderStyle(null);
+        cell.setTopPadding(50);
+        cell.setFontSize(12);
 
         try {
             table.draw();
