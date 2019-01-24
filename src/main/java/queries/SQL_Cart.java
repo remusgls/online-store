@@ -23,7 +23,7 @@ public class SQL_Cart {
         // check if cart id already exists
         if (this.checkUserCart(connection, userId)) {
             new DB_Connection().closeDBConnection(connection);
-            System.out.println(Errors.ERROR_DB_INVALID_MODEL_ID);
+            System.out.println("User " + userId + " has cart already prepared!");
 
             return;
         }

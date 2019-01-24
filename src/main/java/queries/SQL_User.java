@@ -1,5 +1,6 @@
 package queries;
 
+import model.user.User;
 import tools.DB_Connection;
 import types.Db_Fields;
 import types.Errors;
@@ -8,6 +9,102 @@ import java.sql.*;
 import java.util.Base64;
 
 public class SQL_User {
+    public void updateUserPassword(int userId, String newPassword) throws SQLException {
+        Connection connection = new DB_Connection().openDBConnection();
+        System.out.println(userId);
+        if (!this.checkExistingUserById(userId)) {
+            System.out.print(Errors.ERROR_DB_INVALID_EMAIL);
+
+            new DB_Connection().closeDBConnection(connection);
+
+            return;
+        }
+
+        PreparedStatement updateUser = connection.prepareStatement("update user set parola = ? where id = ?");
+
+        updateUser.setString(1, new String(Base64.getEncoder().encode(newPassword.getBytes())));
+        updateUser.setInt(2, userId);
+
+        updateUser.executeUpdate();
+
+        connection.commit();
+
+        new DB_Connection().closeDBConnection(connection);
+    }
+
+    public void updateUserMail(int userId, String newMail) throws SQLException {
+        Connection connection = new DB_Connection().openDBConnection();
+
+        if (!this.checkExistingUserById(userId)) {
+            System.out.println(Errors.ERROR_DB_INVALID_EMAIL);
+
+            new DB_Connection().closeDBConnection(connection);
+
+            return;
+        }
+
+        PreparedStatement updateUser = connection.prepareStatement("update user set mail = ? where id = ?");
+
+        updateUser.setString(1, newMail);
+        updateUser.setInt(2, userId);
+
+        updateUser.executeUpdate();
+
+        connection.commit();
+
+        new DB_Connection().closeDBConnection(connection);
+    }
+
+    public void updateUserNume(int userId, String newNume) throws SQLException {
+        Connection connection = new DB_Connection().openDBConnection();
+
+        if (newNume.isEmpty() ||
+            userId == 0 ||
+            !this.checkExistingUserById(userId)) {
+            System.out.println(Errors.ERROR_DB_INVALID_EMAIL);
+
+            new DB_Connection().closeDBConnection(connection);
+
+            return;
+        }
+
+        PreparedStatement updateUser = connection.prepareStatement("update user set nume = ? where id = ?");
+
+        updateUser.setString(1, newNume);
+        updateUser.setInt(2, userId);
+
+        updateUser.executeUpdate();
+
+        connection.commit();
+
+        new DB_Connection().closeDBConnection(connection);
+    }
+
+    public void updateUserPrenume(int userId, String newPrenume) throws SQLException {
+        Connection connection = new DB_Connection().openDBConnection();
+
+        if (newPrenume.isEmpty() ||
+            userId == 0 ||
+            !this.checkExistingUserById(userId)) {
+            System.out.println(Errors.ERROR_DB_INVALID_EMAIL);
+
+            new DB_Connection().closeDBConnection(connection);
+
+            return;
+        }
+
+        PreparedStatement updateUser = connection.prepareStatement("update user set prenume = ? where id = ?");
+
+        updateUser.setString(1, newPrenume);
+        updateUser.setInt(2, userId);
+
+        updateUser.executeUpdate();
+
+        connection.commit();
+
+        new DB_Connection().closeDBConnection(connection);
+    }
+
     public void updateUserData(String email, String newNume, String newPrenume, String newParola, String newEmail) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
@@ -108,7 +205,6 @@ public class SQL_User {
             adresa.length() <= 3 ||
             parola.length() <= 5 ||
             email.length() <= 3 ||
-            this.checkExistingUserByEmail(email) ||
             !(new Db_Fields().EMAIL_PATTERN.matcher(email).matches())) {
             System.out.println(Errors.ERROR_DB_INVALID_USER_DETAILS);
 
@@ -134,7 +230,8 @@ public class SQL_User {
     }
 
     private boolean checkExistingUserByEmail(String emailAddress) throws SQLException {
-        if (emailAddress.length() == 0) {
+        if (emailAddress.isEmpty() ||
+            !(new Db_Fields().EMAIL_PATTERN.matcher(emailAddress).matches())) {
             return true;
         }
 
@@ -155,6 +252,8 @@ public class SQL_User {
                 break;
             }
         }
+
+        new DB_Connection().closeDBConnection(connection);
 
         return foundUserEmailAddress;
     }
@@ -183,5 +282,41 @@ public class SQL_User {
         }
 
         return foundUser;
+    }
+
+    public User loadUserData(String emailAddress, String password) throws SQLException {
+        if (!this.checkExistingUserByEmail(emailAddress)) {
+            System.out.print("User email not found. Create a new user?");
+            return null;
+        }
+
+        SQL_Cart cartTools = new SQL_Cart();
+
+        Connection connection = new DB_Connection().openDBConnection();
+
+        PreparedStatement searchStatement = connection.prepareStatement("select id, nume, prenume, adresa, mail from `user` where mail = ? and parola = ?");
+
+        searchStatement.setString(1, emailAddress);
+        searchStatement.setString(2, new String(Base64.getEncoder().encode(password.getBytes())));
+
+        ResultSet resultSet = searchStatement.executeQuery();
+
+        int id = 0;
+        String email = "";
+        String prenume = "";
+        String nume = "";
+
+        while (resultSet.next()) {
+            email = resultSet.getString("mail");
+            nume = resultSet.getString("nume");
+            prenume = resultSet.getString("prenume");
+            id = resultSet.getInt("id");
+        }
+
+        new DB_Connection().closeDBConnection(connection);
+
+        cartTools.createUserCart(id);
+
+        return new User(id, nume, prenume, email);
     }
 }

@@ -1,12 +1,6 @@
 package core;
 
-import model.User;
-import queries.*;
-import tools.DB_Connection;
-import tools.DB_Statements;
 import tools.PDF_generator;
-import types.Config;
-import types.Db_Fields;
 
 import java.sql.*;
 
