@@ -1,5 +1,6 @@
 package queries;
 
+import model.product.Product;
 import tools.DB_Connection;
 import types.Errors;
 
@@ -7,8 +8,68 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SQL_Piesa {
+    public List<Product> selectProduct(String piesa, String model, String marca) throws SQLException {
+        List<Product> products = new ArrayList<>(100);
+
+        Connection connection = new DB_Connection().openDBConnection();
+
+        PreparedStatement searchStatement = connection.prepareStatement("SELECT a.id, a.id_categorie, a.piesa, a.stoc, d.marca, b.model, c.categorie, a.pret from piesa a, model_auto b, categorie_piesa c, marca_auto d where a.piesa like ? and b.model like ? and d.marca like ? and a.id_model = b.id and b.id_marca = d.id and a.id_categorie = c.id");
+
+        piesa = piesa.isEmpty() ? "" : piesa;
+        model = model.isEmpty() ? "" : model;
+        marca = marca.isEmpty() ? "" : marca;
+
+        searchStatement.setString(1, "%" + (piesa.isEmpty() ? "" : piesa) + "%");
+        searchStatement.setString(2, "%" + (model.isEmpty() ? "" : model) + "%");
+        searchStatement.setString(3, "%" + (marca.isEmpty() ? "" : marca) + "%");
+
+        ResultSet resultSet = searchStatement.executeQuery();
+
+        while (resultSet.next()) {
+            int discountValue = new SQL_Discount().getDiscount(resultSet.getInt("a.id_categorie"));
+
+            products.add(new Product(resultSet.getInt("a.id"),
+                    resultSet.getString("piesa"),
+                    resultSet.getString("marca"),
+                    resultSet.getString("model"),
+                    resultSet.getString("categorie"),
+                    resultSet.getInt("stoc"),
+                    discountValue,
+                    resultSet.getInt("pret")));
+        }
+
+        return products;
+
+        // SELECT a.id, a.piesa, a.stoc, d.marca, b.model, c.categorie, a.pret from piesa a, model_auto b, categorie_piesa c, marca_auto d where a.piesa like "%?%" and b.model LIKE '%?%' and d.marca like '%?%' and a.id_model = b.id and b.id_marca = d.id and a.id_categorie = c.id
+    }
+
+    public int getIdPiesa(String piesa) throws SQLException {
+        int foundId = 0;
+
+        if (piesa.isEmpty()) {
+            return foundId;
+        }
+
+        Connection connection = new DB_Connection().openDBConnection();
+
+        PreparedStatement searchStatement = connection.prepareStatement("select id from `piesa` where piesa like '%?%' limit 1");
+
+        searchStatement.setString(1, piesa);
+
+        ResultSet resultSet = searchStatement.executeQuery();
+
+
+        while (resultSet.next()) {
+            foundId = resultSet.getInt("id");
+        }
+
+        return foundId;
+    }
+
     /**
      * delete row from piesa
      * @param id
@@ -135,7 +196,7 @@ public class SQL_Piesa {
 
         // multiple checks
         if (id == 0 ||
-                pretValue < 0 ||
+            pretValue < 0 ||
             piesa.length() <= 0 ||
             id_model == 0 ||
             !this.checkDuplicateEntry(connection, piesa, id_model)) {
@@ -161,29 +222,22 @@ public class SQL_Piesa {
     /**
      * update stoc from piesa with X piesa
      * @param id
-     * @param piesa
-     * @param id_model
-     * @param stocUpdateValue
      * @throws SQLException
      */
-    public void stocUpdate(int id, String piesa, int id_model, int stocUpdateValue) throws SQLException {
+    public void stocUpdate(int id, int requiredStoc) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
         // multiple checks
         if (id == 0 ||
-            piesa.length() <= 0 ||
-            id_model == 0 ||
-            !this.checkDuplicateEntry(connection, piesa, id_model)) {
+            requiredStoc <= 0) {
             System.out.print(Errors.ERROR_DB_PIESA_NOT_FOUND);
 
             return;
         }
 
-        PreparedStatement searchStatement = connection.prepareStatement("select stoc from `piesa` where id = ? and id_model = ? and piesa = ?");
+        PreparedStatement searchStatement = connection.prepareStatement("select stoc from `piesa` where id = ? limit 1");
 
         searchStatement.setInt(1, id);
-        searchStatement.setInt(2, id_model);
-        searchStatement.setString(3, piesa);
 
         ResultSet results = searchStatement.executeQuery();
 
@@ -193,13 +247,17 @@ public class SQL_Piesa {
             currentStoc = results.getInt("stoc");
         }
 
-        currentStoc = currentStoc + stocUpdateValue;
+        // insuficient stoc
+        if ((currentStoc - requiredStoc) < 0) {
+            System.out.print(Errors.ERROR_DB_PIESA_NOT_FOUND);
 
-        PreparedStatement updateStocStatement = connection.prepareStatement("update piesa set stoc = ? where id = ? and piesa = ?");
+            new DB_Connection().closeDBConnection(connection);
+        }
 
+        PreparedStatement updateStocStatement = connection.prepareStatement("update piesa set stoc = ? where id = ?");
+
+        updateStocStatement.setInt(1, currentStoc - requiredStoc);
         updateStocStatement.setInt(2, id);
-        updateStocStatement.setString(3, piesa);
-        updateStocStatement.setInt(1, currentStoc);
 
         updateStocStatement.executeUpdate();
         connection.commit();
@@ -358,5 +416,31 @@ public class SQL_Piesa {
         }
 
         return existingPiesa;
+    }
+
+    public boolean checkStoc(Connection connection, int idPiesa, int requiredStoc) throws SQLException {
+        // multiple checks
+        if (idPiesa == 0 ||
+            requiredStoc <= 0) {
+            System.out.print(Errors.ERROR_DB_PIESA_NOT_FOUND);
+
+            return false;
+        }
+
+        PreparedStatement searchStatement = connection.prepareStatement("select stoc from `piesa` where id = ? limit 1");
+
+        searchStatement.setInt(1, idPiesa);
+
+        ResultSet results = searchStatement.executeQuery();
+
+        int currentStoc = 0;
+
+        while (results.next()) {
+            currentStoc = results.getInt("stoc");
+        }
+
+        new DB_Connection().closeDBConnection(connection);
+
+        return (currentStoc - requiredStoc) < 0;
     }
 }

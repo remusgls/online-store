@@ -7,7 +7,7 @@ public class Db_Fields {
 
     public final String cartName = "USER_CART_";
 
-    public final String userCartDBFields = "( `id` INT NOT NULL AUTO_INCREMENT , `id_user` INT NOT NULL , `data_comanda` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `produs` VARCHAR(256) NOT NULL , `cantitate` INT NOT NULL, `pret` INT NOT NULL , PRIMARY KEY (`id`))";
+    public final String userCartDBFields = "( `id` INT NOT NULL AUTO_INCREMENT , `id_user` INT NOT NULL , `id_piesa` INT NOT NULL, `data_comanda` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `produs` VARCHAR(256) NOT NULL , `cantitate` INT NOT NULL, `pret` INT NOT NULL , PRIMARY KEY (`id`))";
 
     public static class DB_MODEL {
         private static final String DB_NAME = "model_auto";

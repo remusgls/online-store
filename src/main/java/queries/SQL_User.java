@@ -197,7 +197,7 @@ public class SQL_User {
         new DB_Connection().closeDBConnection(connection);
     }
 
-    public void insertUser(String nume, String prenume, String adresa, String parola, String email) throws SQLException {
+    public User insertUser(String nume, String prenume, String adresa, String parola, String email) throws SQLException {
         Connection connection = new DB_Connection().openDBConnection();
 
         if (nume.length() <= 3 ||
@@ -205,12 +205,13 @@ public class SQL_User {
             adresa.length() <= 3 ||
             parola.length() <= 5 ||
             email.length() <= 3 ||
+            this.checkExistingUserByEmail(email) ||
             !(new Db_Fields().EMAIL_PATTERN.matcher(email).matches())) {
             System.out.println(Errors.ERROR_DB_INVALID_USER_DETAILS);
 
             new DB_Connection().closeDBConnection(connection);
 
-            return;
+            return null;
         }
 
         PreparedStatement insertStatement = connection.prepareStatement("insert into user values(?, ?, ?, ?, ?, ?, ?)");
@@ -226,7 +227,22 @@ public class SQL_User {
         insertStatement.executeUpdate();
         connection.commit();
 
+        PreparedStatement searchStatement = connection.prepareStatement("select id from `user` where mail = ?");
+
+        searchStatement.setString(1, email);
+
+        ResultSet resultSet = searchStatement.executeQuery();
+
+        User newUser = null;
+
+        while (resultSet.next()) {
+            newUser = new User(resultSet.getInt("id"), nume, prenume, email);
+        }
+
+
         new DB_Connection().closeDBConnection(connection);
+
+        return newUser;
     }
 
     private boolean checkExistingUserByEmail(String emailAddress) throws SQLException {

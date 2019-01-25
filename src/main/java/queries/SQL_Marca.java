@@ -11,6 +11,30 @@ import java.sql.SQLException;
 public
 class SQL_Marca {
 
+    public int getMarcaId(String marca) throws SQLException {
+        int foundId = 0;
+
+        if (marca.isEmpty() ||
+            marca.length() < 2) {
+            return foundId;
+        }
+
+        Connection connection = new DB_Connection().openDBConnection();
+
+        PreparedStatement searchStatement = connection.prepareStatement("select id from `marca_auto` where marca like '%?%' limit 1");
+
+        searchStatement.setString(1, marca);
+
+        ResultSet resultSet = searchStatement.executeQuery();
+
+
+        while (resultSet.next()) {
+            foundId = resultSet.getInt("id");
+        }
+
+        return foundId;
+    }
+
     /**
      * insert new marca_auto to marca
      * @param marca

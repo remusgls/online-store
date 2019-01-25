@@ -81,49 +81,65 @@ public class PDF_generator {
 
         // table entries -- header
         Row<PDPage> headerTableEntries = table.createRow(20);
-        cell = headerTableEntries.createCell(10, "NR.");
+        cell = headerTableEntries.createCell(5, "NR.");
         cell.setFont(PDType1Font.HELVETICA_BOLD);
 
-        cell = headerTableEntries.createCell(40, "DENUMIRE PRODUS");
+        cell = headerTableEntries.createCell(30, "DENUMIRE PRODUS");
         cell.setFont(PDType1Font.HELVETICA_BOLD);
 
-        cell = headerTableEntries.createCell(15, "BUC");
+        cell = headerTableEntries.createCell(10, "BUC");
+        cell.setFont(PDType1Font.HELVETICA_BOLD);
+
+        cell = headerTableEntries.createCell(10, "DISCOUNT");
         cell.setFont(PDType1Font.HELVETICA_BOLD);
 
         cell = headerTableEntries.createCell(15, "PRET U");
         cell.setFont(PDType1Font.HELVETICA_BOLD);
 
-        cell = headerTableEntries.createCell(20, "PRET");
+        cell = headerTableEntries.createCell(15, "PRET");
+        cell.setFont(PDType1Font.HELVETICA_BOLD);
+
+        cell = headerTableEntries.createCell(15, "PRET DUPA DISCOUNT");
         cell.setFont(PDType1Font.HELVETICA_BOLD);
 
         // table entries -- entries
         for(int i = 0; i < 10; i++) {
             Row<PDPage> contentTableEntries = table.createRow(5);
-            cell = contentTableEntries.createCell(10, Integer.toString(i + 1));
+            cell = contentTableEntries.createCell(5, Integer.toString(i + 1));
             cell.setRightBorderStyle(null);
             if (i != 9) {
                 cell.setBottomBorderStyle(null);
             }
 
-            cell = contentTableEntries.createCell(40, "capota motor audi a6 4f");
+            cell = contentTableEntries.createCell(30, "capota motor audi a6 4f");
             cell.setRightBorderStyle(null);
             if (i != 9) {
                 cell.setBottomBorderStyle(null);
             }
 
-            cell = contentTableEntries.createCell(15, "2");
+            cell = contentTableEntries.createCell(10, "2");
+            cell.setRightBorderStyle(null);
+            if (i != 9) {
+                cell.setBottomBorderStyle(null);
+            }
+
+            cell = contentTableEntries.createCell(10, "2");
             cell.setRightBorderStyle(null);
             if (i != 9) {
                 cell.setBottomBorderStyle(null);
             }
 
             cell = contentTableEntries.createCell(15, "20" + invoiceTypes.CURRENCY_TYPE);
-            cell.setRightBorderStyle(null);
             if (i != 9) {
                 cell.setBottomBorderStyle(null);
             }
 
-            cell = contentTableEntries.createCell(20, "40" + invoiceTypes.CURRENCY_TYPE);
+            cell = contentTableEntries.createCell(15, "40" + invoiceTypes.CURRENCY_TYPE);
+            if (i != 9) {
+                cell.setBottomBorderStyle(null);
+            }
+
+            cell = contentTableEntries.createCell(15, "40" + invoiceTypes.CURRENCY_TYPE);
             if (i != 9) {
                 cell.setBottomBorderStyle(null);
             }
@@ -131,12 +147,12 @@ public class PDF_generator {
 
         // table entries -- footer total
         Row<PDPage> footerTableEntries = table.createRow(20);
-        cell = footerTableEntries.createCell(65, "TOTAL");
+        cell = footerTableEntries.createCell(70, "TOTAL");
         cell.setAlign(HorizontalAlignment.RIGHT);
         cell.setFillColor(Color.cyan);
 
         cell = footerTableEntries.createCell(15, "122" + invoiceTypes.CURRENCY_TYPE);
-        cell = footerTableEntries.createCell(20, "321321" + invoiceTypes.CURRENCY_TYPE);
+        cell = footerTableEntries.createCell(15, "321321" + invoiceTypes.CURRENCY_TYPE);
 
         //table entries -- footer semnatura
         Row<PDPage> userDataTableEntries = table.createRow(50);

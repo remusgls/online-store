@@ -9,6 +9,29 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class SQL_Model {
+    public int getModelId(String model) throws SQLException {
+        int foundId = 0;
+
+        if (model.isEmpty()) {
+            return foundId;
+        }
+
+        Connection connection = new DB_Connection().openDBConnection();
+
+        PreparedStatement searchStatement = connection.prepareStatement("select id from `model_auto` where marca like '%?%' limit 1");
+
+        searchStatement.setString(1, model);
+
+        ResultSet resultSet = searchStatement.executeQuery();
+
+
+        while (resultSet.next()) {
+            foundId = resultSet.getInt("id");
+        }
+
+        return foundId;
+    }
+
     public void insertModel(String model,int id_marca) throws SQLException {
        Connection connection = new DB_Connection().openDBConnection();
         PreparedStatement insertModel_auto = connection.prepareStatement("insert into `model_auto` values (?, ?, ?, ?)");
