@@ -5,6 +5,7 @@ import be.quodlibet.boxable.Cell;
 import be.quodlibet.boxable.HorizontalAlignment;
 import be.quodlibet.boxable.Row;
 import be.quodlibet.boxable.line.LineStyle;
+import model.cart.CartItem;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -14,9 +15,11 @@ import types.InvoiceTypes;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PDF_generator {
-    public void generatePDFtable() {
+    public void generatePDFtable(List<CartItem> cartItems) {
         InvoiceTypes invoiceTypes = new InvoiceTypes();
 
         PDPage myPage = new PDPage(PDRectangle.A4);
@@ -40,7 +43,6 @@ public class PDF_generator {
             e.printStackTrace();
             return;
         }
-
 
         //table header
         Row<PDPage> headerRow = table.createRow(10f);
@@ -84,13 +86,13 @@ public class PDF_generator {
         cell = headerTableEntries.createCell(5, "NR.");
         cell.setFont(PDType1Font.HELVETICA_BOLD);
 
-        cell = headerTableEntries.createCell(30, "DENUMIRE PRODUS");
+        cell = headerTableEntries.createCell(28, "DENUMIRE PRODUS");
         cell.setFont(PDType1Font.HELVETICA_BOLD);
 
         cell = headerTableEntries.createCell(10, "BUC");
         cell.setFont(PDType1Font.HELVETICA_BOLD);
 
-        cell = headerTableEntries.createCell(10, "DISCOUNT");
+        cell = headerTableEntries.createCell(12, "DISCOUNT");
         cell.setFont(PDType1Font.HELVETICA_BOLD);
 
         cell = headerTableEntries.createCell(15, "PRET U");
@@ -102,47 +104,55 @@ public class PDF_generator {
         cell = headerTableEntries.createCell(15, "PRET DUPA DISCOUNT");
         cell.setFont(PDType1Font.HELVETICA_BOLD);
 
+        int pretTotalFaraDiscount = 0;
+        int pretTotalCuDiscount = 0;
+        int i = 1;
         // table entries -- entries
-        for(int i = 0; i < 10; i++) {
+        for (CartItem cartItem: cartItems) {
             Row<PDPage> contentTableEntries = table.createRow(5);
             cell = contentTableEntries.createCell(5, Integer.toString(i + 1));
             cell.setRightBorderStyle(null);
-            if (i != 9) {
+            if (i != cartItems.size() - 1) {
                 cell.setBottomBorderStyle(null);
             }
 
-            cell = contentTableEntries.createCell(30, "capota motor audi a6 4f");
+            cell = contentTableEntries.createCell(28, cartItem.getProduct());
             cell.setRightBorderStyle(null);
-            if (i != 9) {
+            if (i != cartItems.size() - 1) {
                 cell.setBottomBorderStyle(null);
             }
 
-            cell = contentTableEntries.createCell(10, "2");
+            cell = contentTableEntries.createCell(10, Integer.toString(cartItem.getBuc()));
             cell.setRightBorderStyle(null);
-            if (i != 9) {
+            if (i != cartItems.size() - 1) {
                 cell.setBottomBorderStyle(null);
             }
 
-            cell = contentTableEntries.createCell(10, "2");
+            cell = contentTableEntries.createCell(12, Integer.toString(cartItem.getDiscount()));
             cell.setRightBorderStyle(null);
-            if (i != 9) {
+            if (i != cartItems.size() - 1) {
                 cell.setBottomBorderStyle(null);
             }
 
-            cell = contentTableEntries.createCell(15, "20" + invoiceTypes.CURRENCY_TYPE);
-            if (i != 9) {
+            cell = contentTableEntries.createCell(15, Integer.toString(cartItem.getPretUnitar()) + invoiceTypes.CURRENCY_TYPE);
+            if (i != cartItems.size() - 1) {
                 cell.setBottomBorderStyle(null);
             }
 
-            cell = contentTableEntries.createCell(15, "40" + invoiceTypes.CURRENCY_TYPE);
-            if (i != 9) {
+            cell = contentTableEntries.createCell(15, Integer.toString(cartItem.getPretFaraDiscount()) + invoiceTypes.CURRENCY_TYPE);
+            if (i != cartItems.size() - 1) {
                 cell.setBottomBorderStyle(null);
             }
 
-            cell = contentTableEntries.createCell(15, "40" + invoiceTypes.CURRENCY_TYPE);
-            if (i != 9) {
+            cell = contentTableEntries.createCell(15, Integer.toString(cartItem.getPretCuDiscount()) + invoiceTypes.CURRENCY_TYPE);
+            if (i != cartItems.size() - 1) {
                 cell.setBottomBorderStyle(null);
             }
+
+            pretTotalCuDiscount += cartItem.getPretCuDiscount();
+            pretTotalFaraDiscount += cartItem.getPretFaraDiscount();
+
+            i++;
         }
 
         // table entries -- footer total
@@ -151,8 +161,8 @@ public class PDF_generator {
         cell.setAlign(HorizontalAlignment.RIGHT);
         cell.setFillColor(Color.cyan);
 
-        cell = footerTableEntries.createCell(15, "122" + invoiceTypes.CURRENCY_TYPE);
-        cell = footerTableEntries.createCell(15, "321321" + invoiceTypes.CURRENCY_TYPE);
+        cell = footerTableEntries.createCell(15, Integer.toString(pretTotalFaraDiscount) + invoiceTypes.CURRENCY_TYPE);
+        cell = footerTableEntries.createCell(15, Integer.toString(pretTotalCuDiscount) + invoiceTypes.CURRENCY_TYPE);
 
         //table entries -- footer semnatura
         Row<PDPage> userDataTableEntries = table.createRow(50);

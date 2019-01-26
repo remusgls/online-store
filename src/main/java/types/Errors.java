@@ -24,6 +24,8 @@ public class Errors {
 
     public static final String ERROR_DB_INVALID_MODEL = "Invalid model_auto. Check it out!";
 
+    public static final String ERROR_INSUFICIENT_STOC = "Insuficient stoc. Please check the stoc!!";
+
 
 
 }

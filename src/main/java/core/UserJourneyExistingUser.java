@@ -1,24 +1,29 @@
 package core;
 
+import model.cart.Cart;
 import model.cart.CartItem;
 import model.product.Product;
 import model.user.User;
+import queries.SQL_Cart;
 import queries.SQL_Piesa;
 import queries.SQL_User;
+import tools.PDF_generator;
+import types.Errors;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserJourneyExistingUser {
     public static void main(String[] args) {
-        User remus = null;
+        User user = null;
 
         // Log in user and prepare user cart
         try {
-            remus = new SQL_User().loadUserData("myhawesa@gmail.com", "newPassword");
+            user = new SQL_User().loadUserData("myhawesa@gmail.com", "newPassword");
 
-            if (remus == null) {
+            if (user == null) {
                 return;
             }
         } catch (SQLException e) {
@@ -26,29 +31,29 @@ public class UserJourneyExistingUser {
             return;
         }
 
-        if (remus.getId() == 0) {
+        if (user.getId() == 0) {
             return;
         }
 
         // Display current user data
-        System.out.println(remus);
+        System.out.println(user);
 
 
         // Update user data
 //        try {
-//            remus.setPrenume(remus.getId(), "Renum");
-//            remus.setNume(remus.getId(), "George");
-//            remus.setEmail(remus.getId(), "myhawesa@gmail.com");
+//            user.setPrenume(user.getId(), "Renum");
+//            user.setNume(user.getId(), "George");
+//            user.setEmail(user.getId(), "myhawesa@gmail.com");
 //
 //            // credentials
-//            remus.setPassword(remus.getId(), "newPassword");
+//            user.setPassword(user.getId(), "newPassword");
 //        } catch (SQLException e) {
 //            e.printStackTrace();
 //        }
 
 
         // Show some products
-        List<Product> products;
+        List<Product> products = new ArrayList<>(10);
 
         try {
             products = new SQL_Piesa().selectProduct("", "a2", "");
@@ -69,8 +74,37 @@ public class UserJourneyExistingUser {
             e.printStackTrace();
         }
 
-        // ADD TO CART
-        List<CartItem> userCart = new ArrayList<>(1);
+        List<CartItem> cartItems = new ArrayList<>(10);
+
+        Product newProductToAdd = products.stream().filter(product -> product.getId() == 30).findAny().orElse(null);
+
+        CartItem newCartItem = null;
+
+        try {
+            newCartItem = new SQL_Cart().insertCartItem(user.getId(), newProductToAdd, 10);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        cartItems.add(newCartItem);
+
+        // update cart item if already existing
+//        if (newCartItem != null) {
+//            for (CartItem cartItem: cartItems) {
+//                if (cartItem.getId() == newCartItem.getId()) {
+//                    cartItem.setBuc(newCartItem.getBuc());
+//                    cartItem.setPretCuDiscount(newCartItem.getPretCuDiscount());
+//                    cartItem.setPretFaraDiscount(newCartItem.getPretFaraDiscount());
+//                }
+//            }
+//        }
+
+        // TO checkout
+
+        new PDF_generator().generatePDFtable(cartItems);
+
+        // Prepare cart item
+//        List<CartItem> userCart = new ArrayList<>(1);
 
 //        userCart.add()
     }

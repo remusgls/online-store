@@ -87,6 +87,10 @@ public class Product {
         return pret;
     }
 
+    public int getDiscount() {
+        return this.discount;
+    }
+
     public void setPret(int pret) {
         this.pret = pret;
     }

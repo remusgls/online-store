@@ -34,6 +34,6 @@ public class test {
 //        User remus = new User()
 
         // PDF GENERATOR
-        new PDF_generator().generatePDFtable();
+//        new PDF_generator().generatePDFtable(cart);
     }
 }

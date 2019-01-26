@@ -19,10 +19,6 @@ public class SQL_Piesa {
 
         PreparedStatement searchStatement = connection.prepareStatement("SELECT a.id, a.id_categorie, a.piesa, a.stoc, d.marca, b.model, c.categorie, a.pret from piesa a, model_auto b, categorie_piesa c, marca_auto d where a.piesa like ? and b.model like ? and d.marca like ? and a.id_model = b.id and b.id_marca = d.id and a.id_categorie = c.id");
 
-        piesa = piesa.isEmpty() ? "" : piesa;
-        model = model.isEmpty() ? "" : model;
-        marca = marca.isEmpty() ? "" : marca;
-
         searchStatement.setString(1, "%" + (piesa.isEmpty() ? "" : piesa) + "%");
         searchStatement.setString(2, "%" + (model.isEmpty() ? "" : model) + "%");
         searchStatement.setString(3, "%" + (marca.isEmpty() ? "" : marca) + "%");
@@ -30,7 +26,7 @@ public class SQL_Piesa {
         ResultSet resultSet = searchStatement.executeQuery();
 
         while (resultSet.next()) {
-            int discountValue = new SQL_Discount().getDiscount(resultSet.getInt("a.id_categorie"));
+            int discountValue = new SQL_Discount().getDiscount(connection, resultSet.getInt("a.id_categorie"));
 
             products.add(new Product(resultSet.getInt("a.id"),
                     resultSet.getString("piesa"),
@@ -43,8 +39,27 @@ public class SQL_Piesa {
         }
 
         return products;
+    }
 
-        // SELECT a.id, a.piesa, a.stoc, d.marca, b.model, c.categorie, a.pret from piesa a, model_auto b, categorie_piesa c, marca_auto d where a.piesa like "%?%" and b.model LIKE '%?%' and d.marca like '%?%' and a.id_model = b.id and b.id_marca = d.id and a.id_categorie = c.id
+    public int getIdCategorie(Connection connection, int piesaId) throws SQLException {
+        int foundId = 0;
+
+        if (piesaId == 0) {
+            return foundId;
+        }
+
+        PreparedStatement searchStatement = connection.prepareStatement("select id_categorie from `piesa` where id = ? limit 1");
+
+        searchStatement.setInt(1, piesaId);
+
+        ResultSet resultSet = searchStatement.executeQuery();
+
+
+        while (resultSet.next()) {
+            foundId = resultSet.getInt("id_categorie");
+        }
+
+        return foundId;
     }
 
     public int getIdPiesa(String piesa) throws SQLException {
